@@ -9,7 +9,8 @@ memory = File.open('2.input').readline.split(',').map(&:to_i)
     comp = Intcode.new(memory.dup)
     comp[1] = i
     comp[2] = j
-    if comp.execute == 19690720
+    comp.execute
+    if comp[0] == 19690720
       puts "#{i} #{j}"
     end
   end
