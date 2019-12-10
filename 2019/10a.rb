@@ -6,7 +6,7 @@ layout = File.open('10.input').readlines.map(&:chomp)
 asteroids = [].tap do |a|
   layout.each_with_index do |line, i|
     line.chars.each_with_index do |col, j|
-      a << [i, j] if col == '#'
+      a << [j, i] if col == '#'
     end
   end
 end
@@ -17,7 +17,7 @@ best = asteroids.map do |candidate|
     slope = Float(candidate[0] - a[0]) / (candidate[1] - a[1])
     angles << [slope, candidate[0] > a[0]]
   end
-  angles.size
-end.max
+  [candidate, angles.size]
+end.max_by { |x,y| y }
 
-puts best
+puts "#{best[1]} at #{best[0].join(',')}"
