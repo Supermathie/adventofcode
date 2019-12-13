@@ -70,15 +70,13 @@ while comp.alive? or comp.output.length > 0
   robot.forward
 end
 
-min_x = panels.keys.map(&:first).min
-min_y = panels.keys.map(&:last).min
+min_x, max_x = panels.keys.map(&:first).minmax
+min_y, max_y = panels.keys.map(&:last).minmax
 
-width = panels.keys.map(&:first).max - panels.keys.map(&:first).min + 1
-height = panels.keys.map(&:last).max - panels.keys.map(&:last).min + 1
 
-height.times.to_a.reverse.each do |y|
-  width.times do |x|
-    colour = panels.fetch([x + min_x, y + min_y], :black)
+(min_y..max_y).to_a.reverse.each do |y|
+  (min_x..max_x).each do |x|
+    colour = panels.fetch([x, y], :black)
     print({ :black => ' ', :white => '×' }[colour])
   end
   puts
