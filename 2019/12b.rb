@@ -17,11 +17,7 @@ class Moon
   end
 
   def attract(other)
-    d_vel = Vector[
-      other.pos[0] <=> @pos[0],
-      other.pos[1] <=> @pos[1],
-      other.pos[2] <=> @pos[2],
-    ]
+    d_vel = Vector[*other.pos.zip(@pos).map { |x, y| x <=> y }]
     other.vel -= d_vel
     @vel += d_vel
   end
@@ -31,7 +27,7 @@ class Moon
   end
 
   def energy
-    @pos.to_a.map(&:abs).sum * @vel.to_a.map(&:abs).sum
+    @pos.sum(&:abs) * @vel.sum(&:abs)
   end
 
   def hash_x
@@ -50,10 +46,9 @@ class Moon
 end
 
 def run(filename)
-  moons = Array.new
-  File.open(filename).each_line do |line|
+  moons = File.open(filename).map do |line|
     x, y, z = line.match(/^<x= ?(-?\d+), y= ?(-?\d+), z= ?(-?\d+)>$/).captures.map(&:to_i)
-    moons << Moon.new(Vector[x, y, z])
+    Moon.new(Vector[x, y, z])
   end
 
   x_states = { moons.map(&:hash_x) => 0 }
@@ -67,27 +62,24 @@ def run(filename)
     end
     moons.each(&:move)
 
-    if !x_period
-      if x_states.has_key? moons.map(&:hash_x)
-        x_period = i - x_states[moons.map(&:hash_x)]
-      else
-        x_states[moons.map(&:hash_x)] = i
-      end
+    x_period || if x_states.has_key? moons.map(&:hash_x)
+      x_period = i - x_states[moons.map(&:hash_x)]
+    else
+      x_states[moons.map(&:hash_x)] = i
     end
-    if !y_period
-      if y_states.has_key? moons.map(&:hash_y)
-        y_period = i - y_states[moons.map(&:hash_y)]
-      else
-        y_states[moons.map(&:hash_y)] = i
-      end
+
+    y_period || if y_states.has_key? moons.map(&:hash_y)
+      y_period = i - y_states[moons.map(&:hash_y)]
+    else
+      y_states[moons.map(&:hash_y)] = i
     end
-    if !z_period
-      if z_states.has_key? moons.map(&:hash_z)
-        z_period = i - z_states[moons.map(&:hash_z)]
-      else
-        z_states[moons.map(&:hash_z)] = i
-      end
+
+    z_period || if z_states.has_key? moons.map(&:hash_z)
+      z_period = i - z_states[moons.map(&:hash_z)]
+    else
+      z_states[moons.map(&:hash_z)] = i
     end
+
     break if x_period and y_period and z_period
   end
   puts "#{x_period}, #{y_period}, #{z_period}"
