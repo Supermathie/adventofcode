@@ -118,6 +118,10 @@ class IntcodeThread < Array
     @thread.join
   end
 
+  def status
+    @thread.status
+  end
+
   attr_accessor :input, :output
 
   def parse_opcode(op)
