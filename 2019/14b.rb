@@ -23,51 +23,11 @@ class ReactionChamber
 
   def clear!
     @materials = {}
-    @ore_used = 0
-    @fuel_produced = 0
   end
 
-  def consume_qty(mat, qty)
-    if mat == 'ORE'
-      @ore_used += qty
-    else
-      immed = [@materials.fetch(mat, 0), qty].min
-      if immed > 0
-        qty -= immed
-        @materials[mat] -= immed
-      end
-      qty.times { consume mat }
-    end
-  end
-
-  def consume(mat)
-    if @materials.fetch(mat, 0) == 0
-      produce(mat)
-    end
-    @materials[mat] -= 1
-  end
-
-  def produce(mat)
-    output_qty, inputs = @reactions[mat]
-    inputs.each do |input_mat, input_qty|
-      consume_qty(input_mat, input_qty)
-    end
-    @materials[mat] = @materials.fetch(mat, 0) + output_qty
-    @fuel_produced += 1 if mat == 'FUEL'
-  end
-
-  def mul=(qty)
-    @materials.each_key { |k| @materials[k] *= qty }
-    @ore_used *= qty
-    @fuel_produced *= qty
-  end
-
-  def materials_empty?
-    @materials.filter { |m, q| q != 0 }.empty?
-  end
-
-  def ore_required_for_material(mat, qty)
+  def ore_required_for_material(mat, qty, clear: true)
     return qty if mat == 'ORE'
+    clear! if clear
 
     immed = [@materials.fetch(mat, 0), qty].min
     if immed > 0
@@ -79,11 +39,11 @@ class ReactionChamber
     scale = (qty.to_f/output_qty).ceil
     @materials[mat] = @materials.fetch(mat, 0) + output_qty * scale - qty
     inputs.map do |input_mat, input_qty|
-      ore_required_for_material(input_mat, input_qty * scale)
+      ore_required_for_material(input_mat, input_qty * scale, clear: false)
     end.sum
   end
 
-  attr_reader :ore_used, :materials, :fuel_produced
+  attr_reader :materials
 end
 
 testinput = []
@@ -146,17 +106,12 @@ EOF
 
 testinput.each_with_index do |data, i|
   rc = ReactionChamber.new(data[0])
-  rc.produce("FUEL")
-  puts "test #{i} (\#1) should be #{data[1]}: #{rc.ore_used}"
   rc.clear!
-  puts "test #{i} (\#2) should be #{data[1]}: #{rc.ore_required_for_material('FUEL', 1)}"
+  ore = rc.ore_required_for_material('FUEL', 1)
+  puts "test #{i} should be #{data[1]}: #{ore}" if ore != data[1]
 end
 
 rc = ReactionChamber.new(File.open('14.input'))
-rc.consume("FUEL")
-puts "#{rc.ore_used} for one FUEL"
 
-rc.clear!
-
-f2 = (1..100000000).bsearch { |i| rc.clear!; rc.ore_required_for_material('FUEL', i) > 1_000_000_000_000 } - 1
+f2 = (1..100000000).bsearch { |i| rc.ore_required_for_material('FUEL', i) > 1_000_000_000_000 } - 1
 puts "#{f2} fuel produced with 1T ore"
