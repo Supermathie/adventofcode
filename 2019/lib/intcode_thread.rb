@@ -121,6 +121,10 @@ class IntcodeThread < Array
   def status
     @thread.status
   end
+  
+  def kill
+    @thread.kill
+  end
 
   attr_accessor :input, :output
 
