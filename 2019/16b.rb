@@ -1,44 +1,5 @@
 #!/usr/bin/env ruby
 
-# dead code
-class Pattern
-  def initialize(i)
-    @index = i + 1
-  end
-  def each
-    loop do
-      @index.times { yield 0 }
-      @index.times { yield 1 }
-      @index.times { yield 0 }
-      @index.times { yield -1 }
-    end
-  end
-end
-
-def fft_round_a!
-  input.map!.with_index do |e, i|
-    pattern = @pattern[i + offset]
-    pattern *= (input.length / pattern.length) + 1
-    input.slice(i..).zip(pattern.slice((i+offset)..)).reduce(0) { |a, e| a + e[0] * e[1] }.abs % 10
-  end
-end
-# /dead
-
-@pattern = Hash.new do |h, k|
-  pat = [].tap do |l|
-    (k+1).times { l << 0 }
-    (k+1).times { l << 1 }
-    (k+1).times { l << 0 }
-    (k+1).times { l << -1 }
-  end
-  pat << pat.shift # 'ignore' the first 0 by rolling it to the end
-  if k < 200000
-    h[k] = pat
-  else
-    pat
-  end
-end
-
 def fft_round!(input, offset: 0)
   # each digit ONLY depends on itself & successive digits so we can modify in-place
   input.map!.with_index do |e, i|
