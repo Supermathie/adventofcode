@@ -2,21 +2,27 @@
 
 def fft_round!(input, offset: 0)
   # each digit ONLY depends on itself & successive digits so we can modify in-place
-  input.map!.with_index do |e, i|
-    # 0: 0, -2, 4, -6, 8, -10…
-    # 1: 1, 2, -5, -6, 9, 10…
-    # 2: 2, 3, 4, -8, -9, -10…
-    # 3: 3, 4, 5, 6, -11, -12, -13, -14…
-    #
-    # 0: +0 len 1, -+2 len 1, +4 len 1, -+6 len 1…
-    # 1: +0 len 2, -+4 len 2, +8 len 2,
-    # 2: +0 len 3, -+6 len 3, +12 len 3,
-    sum = 0
-    runlen = i + offset + 1
-    (i..input.length).step(runlen*2).each_with_index do |j, parity|
-      sum += input.slice(j..(j+runlen-1)).sum * (parity % 2 == 0 ? 1 : -1)
+  if offset >= input.length
+    (input.length-1).downto(0) do |i|
+      input[i] = (input.fetch(i+1, 0) + input[i]) % 10
     end
-    sum.abs % 10
+  else
+    input.map!.with_index do |e, i|
+      # 0: 0, -2, 4, -6, 8, -10…
+      # 1: 1, 2, -5, -6, 9, 10…
+      # 2: 2, 3, 4, -8, -9, -10…
+      # 3: 3, 4, 5, 6, -11, -12, -13, -14…
+      #
+      # 0: +0 len 1, -+2 len 1, +4 len 1, -+6 len 1…
+      # 1: +0 len 2, -+4 len 2, +8 len 2,
+      # 2: +0 len 3, -+6 len 3, +12 len 3,
+      sum = 0
+      runlen = i + offset + 1
+      (i..input.length).step(runlen*2).each_with_index do |j, parity|
+        sum += input.slice(j..(j+runlen-1)).sum * (parity % 2 == 0 ? 1 : -1)
+      end
+      sum.abs % 10
+    end
   end
 end
 
@@ -29,7 +35,7 @@ end
 def fft_with_offset_header(input, rounds: 1)
   offset = input.slice(0..6).join.to_i
   output = (input * 10000).slice(offset..)
-  rounds.times { |i| puts "#{i}: #{output.slice(0..7)}"; fft_round!(output, offset: offset) }
+  rounds.times { fft_round!(output, offset: offset) }
   output
 end
 
@@ -43,7 +49,7 @@ tests = [
 
 tests.each do |input, output|
   ans = fft(input.each_char.map(&:to_i), rounds: 100).slice(0..7).join.to_i
-  puts "#{input} → #{ans} (should be #{output})" # unless ans == output
+  puts "#{input} → #{ans} (should be #{output})" unless ans == output
 end
 
 # part b
@@ -53,10 +59,12 @@ tests2 = [
   ["03081770884921959731165446850517", 53553731],
 ]
 
-#tests2.each do |input, output|
-#  ans = fft_with_offset_header(input.each_char.map(&:to_i), rounds: 100).slice(0..7).join.to_i
-#  puts "#{input} → #{ans} (should be #{output})" # unless ans == output
-#end
+tests2.each do |input, output|
+  ans = fft_with_offset_header(input.each_char.map(&:to_i), rounds: 100).slice(0..7).join.to_i
+  puts "#{input} → #{ans} (should be #{output})" unless ans == output
+end
 
+# 93242278 too high
 input = File.open('16.input').readline.each_char.map(&:to_i)
-puts(fft_with_offset_header(input, rounds: 100).slice(0..7).join)
+output = fft_with_offset_header(input, rounds: 100)
+puts(output.slice(0..7).join.to_i)
