@@ -3,6 +3,13 @@
 require 'matrix'
 require_relative 'lib/intcode_thread'
 
+def map_to_matrix(data)
+  map = data.split("\n")
+  height = map.length
+  width = map.first.length
+  Matrix.build(height, width) { |y, x| map[y][x] }
+end
+
 mapcomp = IntcodeThread.new(File.open('17.input').readline.strip.split(',').map(&:to_i))
 mapcomp.execute.join
 mapdata = "".tap { |s| s << mapcomp.output.pop until mapcomp.output.empty? }
