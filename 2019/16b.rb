@@ -65,6 +65,6 @@ tests2.each do |input, output|
 end
 
 # 93242278 too high
-input = File.open('16.input').readline.each_char.map(&:to_i)
+input = File.open('16.input').readline.chomp.each_char.map(&:to_i)
 output = fft_with_offset_header(input, rounds: 100)
 puts(output.slice(0..7).join.to_i)
