@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+// ReadFileInts reads an array of line-separated integers from a file
 func ReadFileInts(input string) ([]int, error) {
 	buf, err := os.Open(input)
 	if err != nil {

@@ -1,26 +1,23 @@
 package main
 
 import (
-	"log"
-
 	"supermathie.net/libadvent"
 )
 
-func day1a(inputFile string) int {
+func day1a(inputFile string) (int, error) {
 	target := 2020
 
 	input, err := libadvent.ReadFileInts(inputFile)
 	if err != nil {
-		log.Fatal(err)
+		return -1, err
 	}
 
 	for _, v1 := range input {
 		for _, v2 := range input {
 			if v1+v2 == target {
-				return v1 * v2
+				return v1 * v2, nil
 			}
 		}
 	}
-	log.Fatal("target not found")
-	return -1
+	return -1, adventError("target not found")
 }
