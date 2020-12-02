@@ -8,13 +8,8 @@ import (
 	"supermathie.net/libadvent"
 )
 
-/*
-Each policy actually describes two positions in the password, where 1 means the
-first character, 2 means the second character, and so on. (Be careful; Toboggan
-Corporate Policies have no concept of "index zero"!) Exactly one of these
-positions must contain the given letter. Other occurrences of the letter are
-irrelevant for the purposes of policy enforcement.
-*/
+// The policy (before the : ) describes two one-indexed positions. Exactly one
+// of these positions in the password must be the specified character to be valid.
 func day2bIsValidPassword(pass string) bool {
 	// 1-7 h: hhlnhfhzxhhphhdhh
 	r := regexp.MustCompile(`^(\d+)-(\d+)\s+(.):\s+(.*)$`)

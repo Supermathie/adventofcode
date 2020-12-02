@@ -9,6 +9,10 @@ import (
 	"supermathie.net/libadvent"
 )
 
+/*
+	The policy (before the : ) describes the minimum and maximum number of times
+	the character that follows must appear in the password.
+*/
 func day2aIsValidPassword(pass string) bool {
 	// 1-7 h: hhlnhfhzxhhphhdhh
 	r := regexp.MustCompile(`^(\d+)-(\d+)\s+(.):\s+(.*)$`)
