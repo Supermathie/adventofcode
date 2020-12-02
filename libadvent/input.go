@@ -34,3 +34,26 @@ func ReadFileInts(input string) ([]int, error) {
 	}
 	return vals, nil
 }
+
+// ReadFileLines reads an array of lines from a file
+func ReadFileLines(input string) (chan string, error) {
+	buf, err := os.Open(input)
+	if err != nil {
+		return nil, err
+	}
+
+	c := make(chan string)
+
+	go func() {
+		snl := bufio.NewScanner(buf)
+		for snl.Scan() {
+			c <- snl.Text()
+		}
+		close(c)
+		err = buf.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+	return c, nil
+}
