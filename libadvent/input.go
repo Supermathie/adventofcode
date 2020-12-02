@@ -23,7 +23,7 @@ func ReadFileInts(input string) ([]int, error) {
 
 	snl := bufio.NewScanner(buf)
 
-	var vals []int
+	vals := make([]int, 0)
 
 	for snl.Scan() {
 		val, err := strconv.Atoi(snl.Text())
