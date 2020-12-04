@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -9,10 +8,10 @@ import (
 	"supermathie.net/libadvent"
 )
 
-func day4bValidPassport(passport string) bool {
+func day4bIsValidPassport(passport string) bool {
 	requiredFields := []string{"byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"}
 
-	fields := regexp.MustCompile("[\n ]+").Split(passport, -1)
+	fields := regexp.MustCompile(`\s+`).Split(passport, -1)
 	fieldMap := make(map[string]string)
 
 	for _, field := range fields {
@@ -102,11 +101,11 @@ func day4b(inputFile string) (int, error) {
 
 	for line := range c {
 		if line == "" {
-			if day4bValidPassport(curPassport) {
-				fmt.Printf("valid: %v\n", curPassport)
+			if day4bIsValidPassport(curPassport) {
+				// fmt.Printf("valid: %v\n", curPassport)
 				validPassports++
 			} else {
-				fmt.Printf("INVALID: %v\n", curPassport)
+				// fmt.Printf("INVALID: %v\n", curPassport)
 			}
 			curPassport = ""
 		} else {
@@ -117,11 +116,11 @@ func day4b(inputFile string) (int, error) {
 			}
 		}
 	}
-	if day4bValidPassport(curPassport) {
-		fmt.Printf("valid: %v\n", curPassport)
+	if day4bIsValidPassport(curPassport) {
+		// fmt.Printf("valid: %v\n", curPassport)
 		validPassports++
 	} else {
-		fmt.Printf("INVALID: %v\n", curPassport)
+		// fmt.Printf("INVALID: %v\n", curPassport)
 	}
 
 	return validPassports, nil
