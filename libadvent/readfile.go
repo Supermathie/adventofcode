@@ -54,3 +54,27 @@ func ReadFileInts(input string) ([]int, error) {
 	}
 	return vals, nil
 }
+
+// ReadFileLinesSeparated reads a file into a 2d slice, separated by blank lines
+func ReadFileLinesSeparated(input string) ([][]string, error) {
+	c, err := ReadFileLines(input)
+	if err != nil {
+		return nil, err
+	}
+
+	blocks := make([][]string, 0)
+	curBlock := make([]string, 0)
+
+	for line := range c {
+		if line == "" {
+			blocks = append(blocks, curBlock)
+			curBlock = make([]string, 0)
+		} else {
+			curBlock = append(curBlock, line)
+		}
+	}
+	if len(curBlock) != 0 {
+		blocks = append(blocks, curBlock)
+	}
+	return blocks, nil
+}
