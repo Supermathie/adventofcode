@@ -33,6 +33,8 @@ func main() {
 		"5b": day5b,
 		"6a": day6a,
 		"6b": day6b,
+		"7a": day7a,
+		"7b": day7b,
 	}[day]
 
 	if dayFunc == nil {
