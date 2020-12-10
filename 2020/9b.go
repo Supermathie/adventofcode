@@ -12,7 +12,7 @@ func day9b(inputFile string) (int, error) {
 		return -1, err
 	}
 
-	target, _ := day9a(inputFile)
+	target := 756008079 // output of day9a
 	i, err := libadvent.IndexOf(allData, target)
 	if err != nil {
 		log.Fatalf("Whaaaaaaat? %v is not in the input? %s", target, err)

@@ -23,13 +23,41 @@
       "args": ["7b", "testdata/7_2"]
     },
     {
-      "name": "2020 7b real",
+      "name": "2020 9a real",
       "type": "go",
       "request": "launch",
       "mode": "auto",
       "program": "${fileDirname}",
       "env": {},
-      "args": ["7b", "input/7"]
+      "args": ["9a", "input/9"]
+    },
+    {
+      "name": "2020 9b real",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["9b", "input/9"]
     }
+    {
+      "name": "2020 10a real",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["10a", "input/10"]
+    },
+    {
+      "name": "2020 10b real",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["10b", "input/10"]
+    }
+
   ]
 }
