@@ -57,7 +57,26 @@
       "program": "${fileDirname}",
       "env": {},
       "args": ["10b", "input/10"]
+    },
+    {
+      "name": "2020 11a real",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["11a", "input/11"]
+    },
+    {
+      "name": "2020 11b real",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["11b", "input/11"]
     }
+
 
   ]
 }
