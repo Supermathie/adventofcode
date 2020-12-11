@@ -3,54 +3,80 @@ package main
 import (
 	"fmt"
 	"log"
-	"reflect"
-	"strings"
 	"time"
 
 	"supermathie.net/libadvent"
 )
 
-func applyRound(seats []string) []string {
+func applyRound(seats [][]rune, abandonThreshold uint, visionDistance uint) (newSeats [][]rune, changed bool) {
 	rX := len(seats[0])
 	rY := len(seats)
-	newSeats := make([]string, 0)
+	newSeats = make([][]rune, rY)
+	changed = false
 	for y := 0; y < rY; y++ {
-		newSeatLine := make([]string, 0)
+		newSeats[y] = make([]rune, rX)
 		for x := 0; x < rX; x++ {
 			if seats[y][x] == '.' {
-				newSeatLine = append(newSeatLine, ".")
+				newSeats[y][x] = '.'
 				continue
 			}
-			occupiedAdjacent := 0
-			if y > 0 {
-				occupiedAdjacent += strings.Count(seats[y-1][libadvent.Max([]int{0, x - 1}):libadvent.Min([]int{rX, x + 2})], "#")
-			}
-			occupiedAdjacent += strings.Count(seats[y][libadvent.Max([]int{0, x - 1}):libadvent.Min([]int{rX, x + 2})], "#")
-			if y < rY-1 {
-				occupiedAdjacent += strings.Count(seats[y+1][libadvent.Max([]int{0, x - 1}):libadvent.Min([]int{rX, x + 2})], "#")
+			occupiedSeen := uint(0)
+			for i := 0; i < 9; i++ {
+				if look(seats, x, y, i, visionDistance) == '#' {
+					occupiedSeen++
+				}
 			}
 			switch seats[y][x] {
 			case 'L':
-				if occupiedAdjacent == 0 {
-					newSeatLine = append(newSeatLine, "#")
+				if occupiedSeen == 0 {
+					newSeats[y][x] = '#'
+					changed = true
 				} else {
-					newSeatLine = append(newSeatLine, "L")
+					newSeats[y][x] = 'L'
 				}
 			case '#':
-				if occupiedAdjacent-1 >= 4 { // we counted ourself
-					newSeatLine = append(newSeatLine, "L")
-					//newSeatLine = append(newSeatLine, fmt.Sprintf("%d", occupiedAdjacent-1))
+				if occupiedSeen >= abandonThreshold {
+					newSeats[y][x] = 'L'
+					changed = true
 				} else {
-					newSeatLine = append(newSeatLine, "#")
-					//newSeatLine = append(newSeatLine, fmt.Sprintf("%d", occupiedAdjacent-1))
+					newSeats[y][x] = '#'
 				}
 			default:
 				log.Fatalf("bad seat %v", seats[y][x])
 			}
 		}
-		newSeats = append(newSeats, strings.Join(newSeatLine, ""))
 	}
-	return newSeats
+	return
+}
+
+func look(seats [][]rune, x, y, dir int, visionDistance uint) rune {
+	if dir == 4 { // ourself
+		return '.'
+	}
+	rX := len(seats[0])
+	rY := len(seats)
+
+	dX := dir%3 - 1
+	dY := dir/3 - 1
+
+	x += dX
+	y += dY
+	for dist := uint(1); x >= 0 && y >= 0 && x < rX && y < rY && dist <= visionDistance; dist++ {
+		if seats[y][x] != '.' {
+			return seats[y][x]
+		}
+		x += dX
+		y += dY
+	}
+	return '.' // out of bounds
+}
+
+func printSeats(seats [][]rune) {
+	for y := 0; y < len(seats); y++ {
+		fmt.Println(string(seats[y]))
+	}
+	fmt.Println()
+	time.Sleep(time.Millisecond * 75)
 }
 
 func day11a(inputFile string) (int, error) {
@@ -59,19 +85,22 @@ func day11a(inputFile string) (int, error) {
 		return -1, err
 	}
 
-	seats := make([]string, 0)
+	seats := make([][]rune, 0)
 	for i := range c {
-		seats = append(seats, i)
+		seats = append(seats, []rune(i))
 	}
 
-	fmt.Printf("%v\n\n", strings.Join(seats, "\n"))
-	for newSeats := applyRound(seats); !reflect.DeepEqual(seats, newSeats); {
-		seats = newSeats
-		fmt.Printf("%v\n\n", strings.Join(seats, "\n"))
-		newSeats = applyRound(seats)
-		time.Sleep(time.Millisecond * 100)
+	for changed := true; changed == true; seats, changed = applyRound(seats, 4, 1) {
+		// printSeats(seats)
 	}
 
-	fmt.Printf("%v\n", strings.Join(seats, "\n"))
-	return strings.Count(strings.Join(seats, ""), "#"), nil
+	totalOccupied := 0
+	for y := 0; y < len(seats); y++ {
+		for x := 0; x < len(seats[y]); x++ {
+			if seats[y][x] == '#' {
+				totalOccupied++
+			}
+		}
+	}
+	return totalOccupied, nil
 }
