@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"math"
+	"math/cmplx"
 	"strconv"
 
 	"supermathie.net/libadvent"
@@ -15,48 +15,36 @@ func day12b(inputFile string) (int, error) {
 		return -1, err
 	}
 
-	x := 0
-	y := 0
-	dx := 10
-	dy := 1
+	pos := 0 + 0i
+	dPos := 10 + 1i
+
 	for dir := range c {
 		action := dir[0]
-		val, _ := strconv.Atoi(dir[1:])
+		val, err := strconv.ParseFloat(dir[1:], 64)
+		if err != nil {
+			log.Fatalf("could not parse %s as a float: %v", dir[1:], err)
+		}
 		switch action {
 		case 'N':
-			dy += val
+			dPos += complex(0, val)
 		case 'S':
-			dy -= val
+			dPos -= complex(0, val)
 		case 'E':
-			dx += val
+			dPos += complex(val, 0)
 		case 'W':
-			dx -= val
-		case 'L':
-			switch val {
-			case 90:
-				dx, dy = -dy, dx
-			case 180:
-				dx, dy = -dx, -dy
-			case 270:
-				dx, dy = dy, -dx
-			}
+			dPos -= complex(val, 0)
+		case 'L': // CCW rotation by θ (in radians) in the complex plane → multiply by e**(iθ)
+			θ := float64(val) * math.Pi / 180
+			dPos *= cmplx.Pow(complex(math.E, 0), complex(0, θ))
 		case 'R':
-			switch val {
-			case 270:
-				dx, dy = -dy, dx
-			case 180:
-				dx, dy = -dx, -dy
-			case 90:
-				dx, dy = dy, -dx
-			}
+			θ := float64(val) * math.Pi / 180
+			dPos /= cmplx.Pow(complex(math.E, 0), complex(0, θ))
 		case 'F':
-			x += dx * val
-			y += dy * val
+			pos += dPos * complex(val, 0)
 		default:
 			log.Fatalf("bad action %v", action)
 		}
 	}
-	fmt.Printf("%d, %d\n", x, y)
 
-	return int(math.Abs(float64(x)) + math.Abs(float64(y))), nil
+	return int(math.Abs(real(pos)) + math.Abs(imag(pos))), nil
 }
