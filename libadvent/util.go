@@ -71,6 +71,19 @@ func IndexOf(haystack []int, needle int) (int, error) {
 	return 0, errors.New("cannot find needle")
 }
 
+// LCM returns the Least Common Multiple of A and B
+func LCM(a, b uint64) uint64 {
+	return a * b / GCD(a, b)
+}
+
+// GCD returns the Greatest Common Divisor of A and B
+func GCD(a, b uint64) uint64 {
+	if b == 0 {
+		return a
+	}
+	return GCD(b, a%b)
+}
+
 // Combinations generates all num-combinations of options
 func Combinations(options []int, num int) chan []int {
 	c := make(chan []int)
