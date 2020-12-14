@@ -84,23 +84,42 @@ func GCD(a, b uint64) uint64 {
 	return GCD(b, a%b)
 }
 
+// AllCombinations generates all combinations of options
+func AllCombinations(options []int) chan []int {
+	c := make(chan []int)
+	go func() {
+		defer close(c)
+		for i := 0; i <= len(options); i++ {
+			subC := Combinations(options, i)
+			for combo := range subC {
+				c <- combo
+			}
+		}
+	}()
+	return c
+}
+
 // Combinations generates all num-combinations of options
 func Combinations(options []int, num int) chan []int {
 	c := make(chan []int)
 	go func() {
-		for i, val := range options {
-			if num == 1 {
-				c <- []int{val}
-			} else {
-				for subCombination := range Combinations(options[i+1:], num-1) {
-					combination := make([]int, num)
-					combination[0] = val
-					copy(combination[1:], subCombination)
-					c <- combination
+		defer close(c)
+		if num == 0 {
+			c <- []int{}
+		} else {
+			for i, val := range options {
+				if num == 1 {
+					c <- []int{val}
+				} else {
+					for subCombination := range Combinations(options[i+1:], num-1) {
+						combination := make([]int, num)
+						combination[0] = val
+						copy(combination[1:], subCombination)
+						c <- combination
+					}
 				}
 			}
 		}
-		close(c)
 	}()
 	return c
 }
