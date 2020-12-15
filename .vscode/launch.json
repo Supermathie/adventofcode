@@ -112,6 +112,33 @@
       "program": "${fileDirname}",
       "env": {},
       "args": ["14b", "input/14"]
+    },
+    {
+      "name": "2020 15a test",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["15a", "testdata/15_1"]
+    },
+    {
+      "name": "2020 15a real",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["15a", "input/15"]
+    },
+    {
+      "name": "2020 15b real",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["15b", "input/15"]
     }
 
 

@@ -45,6 +45,14 @@ func TestAllCombinations3(t *testing.T) {
 		t.Fatalf("TestAllCombinations3(%v) → (%v), expected %v", options, result, want)
 	}
 }
+func TestAllCombinations8(t *testing.T) {
+	options := []int{1, 2, 3, 4, 5, 6, 7, 8}
+	result := ChanToSliceSI(AllCombinations(options))
+	want := 256 // 2**8
+	if len(result) != want {
+		t.Fatalf("TestAllCombinations8(%v) length → (%v), expected %v", options, len(result), want)
+	}
+}
 
 func TestCombinations0(t *testing.T) {
 	options := []int{1, 2, 3}

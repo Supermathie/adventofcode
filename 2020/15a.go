@@ -1,7 +1,9 @@
 package main
 
 import (
-	"errors"
+	"fmt"
+	"strconv"
+	"strings"
 
 	"supermathie.net/libadvent"
 )
@@ -11,9 +13,27 @@ func day15a(inputFile string) (int, error) {
 	if err != nil {
 		return -1, err
 	}
+	input := make([]int, 0)
+	history := map[int]int{}
 
-	if c != nil {
-
+	cur := 0
+	for i, s := range strings.Split(<-c, ",") {
+		num, _ := strconv.Atoi(s)
+		input = append(input, num)
+		history[num] = i
+		cur = num
 	}
-	return 0, errors.New("not implemented")
+
+	for t := len(input); t < 2020; t++ {
+		lastTime, spokenBefore := history[cur]
+		history[cur] = t - 1
+		if spokenBefore {
+			cur = t - 1 - lastTime
+		} else {
+			cur = 0
+		}
+		fmt.Printf("t=%d, cur=%d\n", t, cur)
+	}
+
+	return cur, nil
 }

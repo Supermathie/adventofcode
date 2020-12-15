@@ -86,7 +86,7 @@ func GCD(a, b uint64) uint64 {
 
 // AllCombinations generates all combinations of options
 func AllCombinations(options []int) chan []int {
-	c := make(chan []int)
+	c := make(chan []int, 4)
 	go func() {
 		defer close(c)
 		for i := 0; i <= len(options); i++ {
@@ -101,7 +101,7 @@ func AllCombinations(options []int) chan []int {
 
 // Combinations generates all num-combinations of options
 func Combinations(options []int, num int) chan []int {
-	c := make(chan []int)
+	c := make(chan []int, 2)
 	go func() {
 		defer close(c)
 		if num == 0 {
