@@ -148,7 +148,26 @@
       "program": "${fileDirname}",
       "env": {},
       "args": ["16a", "input/16"]
+    },
+    {
+      "name": "2020 17 test",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["17a", "testdata/17_1"]
+    },
+    {
+      "name": "2020 17 real",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["17a", "input/17"]
     }
+
 
   ]
 }
