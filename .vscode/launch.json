@@ -5,6 +5,7 @@
   "version": "0.2.0",
   "configurations": [
 
+
     {
       "name": "2020 7b test 1",
       "type": "go",
@@ -166,8 +167,34 @@
       "program": "${fileDirname}",
       "env": {},
       "args": ["17a", "input/17"]
+    },
+    {
+      "name": "2020 18a test",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["18a", "testdata/18_1"]
+    },
+    {
+      "name": "2020 18a real",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["18a", "input/18"]
+    },
+    {
+      "name": "2020 18b real",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["18b", "input/18"]
     }
-
 
   ]
 }
