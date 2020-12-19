@@ -194,7 +194,27 @@
       "program": "${fileDirname}",
       "env": {},
       "args": ["18b", "input/18"]
+    },
+    {
+      "name": "2020 19b test",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["19b", "testdata/19b_ex"]
+    },
+    {
+      "name": "2020 19b real",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["19b", "input/19"]
     }
+
+
 
   ]
 }
