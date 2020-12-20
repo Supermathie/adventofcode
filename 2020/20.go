@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -157,6 +156,8 @@ func day20(inputFile string) (int, int, error) {
 
 	tileMap := [12][12]int{}
 
+	// generalize this solution by picking a random corner tile and slapping it into the top left then reorienting it
+
 	// 1091: 2797:62 3907:06 (west, north)
 	// 2297: 3923:62 3727:07 (west, north)
 	// 2347: 2683:65 2053:45 (west, south)
@@ -258,22 +259,59 @@ func day20(inputFile string) (int, int, error) {
 			}
 		}
 	}
+
+	// generalize this solution by iterating over possible rotations & flips until nessie is found
 	finalImage = flipV(rotateR(finalImage, 1, 96), 96)
+
+	// print the final image
 	for y := 0; y < 96; y++ {
 		fmt.Println(finalImage[y*96 : (y+1)*96])
 	}
 
-	monster := `..................#..{76}`
-	monster += `#....##....##....###.{76}`
-	monster += `.#..#..#..#..#..#`
+	// golang regexp library doesn't support lookahead assertions, which are needed to find *overlapping* matches with a regex
+	// monster := `..................#..{76}`
+	// monster += `#....##....##....###.{76}`
+	// monster += `.#..#..#..#..#..#`
 
-	nessie := regexp.MustCompile(monster)
-	nessies := len(nessie.FindAllString(finalImage, -1))
-	nessies = 43 // golang regexp library doesn't support lookahead assertions, which are needed to find *overlapping* matches
+	// nessie := regexp.MustCompile(monster)
+	// nessies := len(nessie.FindAllString(finalImage, -1))
+	nessies := findNessie(finalImage, 96)
 	spotted := strings.Count(finalImage, "#")
-	roughness := spotted - nessies*15
+	roughness := spotted - nessies*15 // nessie has 15 #
 	fmt.Printf("nessies:%d, spotted:%d, roughness:%d\n", nessies, spotted, roughness)
 	return cornerTotal, roughness, nil
+}
+
+func findNessie(image string, linelen int) (count int) {
+	count = 0
+	isNessie := func(x int, y int) bool {
+		for _, i := range []int{18} {
+			if image[y*linelen+x+i] != '#' {
+				return false
+			}
+		}
+
+		for _, i := range []int{0, 5, 6, 11, 12, 17, 18, 19} {
+			if image[(y+1)*linelen+x+i] != '#' {
+				return false
+			}
+		}
+		for _, i := range []int{1, 4, 7, 10, 13, 16} {
+			if image[(y+2)*linelen+x+i] != '#' {
+				return false
+			}
+		}
+		return true
+	}
+	numLines := len(image) / linelen
+	for y := 0; y < numLines-2; y++ {
+		for x := 0; x <= linelen-20; x++ {
+			if isNessie(x, y) {
+				count++
+			}
+		}
+	}
+	return count
 }
 
 // 2316 too high
