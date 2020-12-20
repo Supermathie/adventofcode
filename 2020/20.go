@@ -290,7 +290,6 @@ func findNessie(image string, linelen int) (count int) {
 				return false
 			}
 		}
-
 		for _, i := range []int{0, 5, 6, 11, 12, 17, 18, 19} {
 			if image[(y+1)*linelen+x+i] != '#' {
 				return false
