@@ -17,3 +17,15 @@ func day21a(inputFile string) (int, error) {
 	}
 	return 0, errors.New("not implemented")
 }
+
+func day21b(inputFile string) (int, error) {
+	c, err := libadvent.ReadFileLines(inputFile)
+	if err != nil {
+		return -1, err
+	}
+
+	if c != nil {
+
+	}
+	return 0, errors.New("not implemented")
+}
