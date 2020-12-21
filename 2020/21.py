@@ -11,21 +11,15 @@ for line in open('input/21'):
 		allergens = m.groups()[1].split(', ')
 
 		for allergen in allergens:
-			if allergen in allergen_map:
-				allergen_map[allergen] = allergen_map[allergen] & ingredients
-			else:
-				allergen_map[allergen] = ingredients 
+			allergen_map[allergen] = allergen_map.get(allergen, ingredients) & ingredients
 
 allergen_ingredients = set(itertools.chain(*allergen_map.values()))
 total = 0
 
 for line in open('input/21'):
 		m = re.match('^(.*) \(contains (.*)\)$', line)
-		ingredients, allergens = m.groups()
-		ingredients = ingredients.split()
-		for ingredient in ingredients:
-			if ingredient not in allergen_ingredients:
-				total+=1
+		ingredients = set(m.groups()[0].split())
+		total += len(ingredients - allergen_ingredients)
 
 print(f"Part 1: {total}")
 
