@@ -212,7 +212,17 @@
       "program": "${fileDirname}",
       "env": {},
       "args": ["19b", "input/19"]
+    },
+    {
+      "name": "2020 23a real",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${fileDirname}",
+      "env": {},
+      "args": ["23a", "389125467"]
     }
+
 
 
 

@@ -2,10 +2,14 @@
 
 import sys
 
+count = 0
+
 def game(p1, p2, recurse=False):
   # print(f"start game between {p1} and {p2}")
   seen = set()
   while len(p1) > 0 and len(p2) > 0:
+    global count
+    count += 1
     h = hash((tuple(p1), tuple(p2)))
     if h in seen:
       # print(f"game over (repetition): {p1} {p2}")
@@ -55,3 +59,4 @@ print(f"Part 1: {winner_sum}")
 winner, deck = game(p1[:], p2[:], recurse=True)
 winner_sum = sum(((i+1)*x for i, x in enumerate(deck)))
 print(f"Part 2: {winner_sum}")
+print(count)
