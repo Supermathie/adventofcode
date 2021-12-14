@@ -3,7 +3,36 @@
 import collections
 import itertools
 import operator
-from termcolor import colored
+import os
+import sys
+
+def make_image(dots):
+  from PIL import Image
+  width = max(map(operator.itemgetter(0), dots))+1
+  height = max(map(operator.itemgetter(1), dots))+1
+  dom = range(width)
+  rng = range(height)
+  image = Image.new('L', (width+2, height+2), 'black')
+  pixels = image.load()
+  for y in rng:
+    for x in dom:
+      if (x,y) in dots:
+        pixels[x+1,y+1] = 0xffffff
+  return image
+
+def do_ocr(dots):
+  if 'GOOGLE_APPLICATION_CREDENTIALS' not in os.environ:
+    raise NotImplemented
+  from google.cloud import vision
+  import io
+  image = make_image(dots)
+  b = io.BytesIO()
+  image.save(b, format='png')
+  #with open('13.png', 'wb') as f:
+  #  f.write(b.getvalue())
+  client = vision.ImageAnnotatorClient()
+  response = client.text_detection(image=vision.Image(content=b.getvalue()))
+  return response.text_annotations[0].description.strip()
 
 def print_dots(dots):
   dom = range(max(map(operator.itemgetter(0), dots))+1)
@@ -62,12 +91,22 @@ def main():
    data = read_data('13.txt')
 
    print(f'part1 test: {part1(test_data)}')
-   print(f'part2 test:')
-   print_dots(part2(test_data))
+   print(f'part2 test:', end='')
+   answer = part2(test_data)
+   try:
+     print(do_ocr(answer))
+   except:
+     print()
+     print_dots(answer)
    
    print(f'part1 real: {part1(data)}')
-   print(f'part2 real:')
-   print_dots(part2(data))
+   print(f'part2 real: ', end='')
+   answer = part2(data)
+   try:
+     print(do_ocr(answer))
+   except:
+     print()
+     print_dots(answer)
 
 import sys
 if len(sys.argv) > 1 and sys.argv[1] == '--test':
