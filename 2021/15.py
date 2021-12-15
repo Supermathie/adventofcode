@@ -25,20 +25,21 @@ def dijkstra(data, start = None, end = None):
          yield (x+dx, y+dy)
   
   distances[0][0] = 0
-  visited[0][0] = True
-  candidates = {(0, 0)}
+  candidates = queue.PriorityQueue()
+  candidates.put((0, start))
 
   while not visited[rng.stop-1][dom.stop-1]:
-    cur = min(candidates, key = lambda x: distances[x[1]][x[0]])
-    candidates.remove(cur)
+    _, cur = candidates.get_nowait()
+    if visited[cur[1]][cur[0]]:
+      continue
     visited[cur[1]][cur[0]] = True
     for n in neighbours(*cur):
       if visited[n[1]][n[0]]:
         continue
-      candidates.add(n)
       new_dist = distances[cur[1]][cur[0]] + data[n[1]][n[0]] 
       if distances[n[1]][n[0]] is None or new_dist < distances[n[1]][n[0]]:
         distances[n[1]][n[0]] = new_dist
+      candidates.put((distances[n[1]][n[0]], n))
   return distances[end[1]][end[0]]
 
 def part1(data):
