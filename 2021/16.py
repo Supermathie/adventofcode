@@ -95,9 +95,9 @@ def process_packet(packet):
     1: lambda x: functools.reduce(op.mul, x),
     2: min,
     3: max,
-    5: lambda x: 1 if op.gt(*x) else 0,
-    6: lambda x: 1 if op.lt(*x) else 0,
-    7: lambda x: 1 if op.eq(*x) else 0,
+    5: lambda x: int(op.gt(*x)),
+    6: lambda x: int(op.lt(*x)),
+    7: lambda x: int(op.eq(*x)),
   }[T](map(process_packet, val))
 
 def part2(data):
