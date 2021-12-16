@@ -38,17 +38,15 @@ def decode_packet(bitstream):
 
   Return: packet_version, packet_type, packet_value
 
-  >>> decode_packet(make_bitstream(io.BytesIO(b'D2FE28')))
+  >>> decode_packet(read_data(b'D2FE28'))
   (6, 4, 2021)
 
-  >>> decode_packet(make_bitstream(io.BytesIO(b'38006F45291200')))
+  >>> decode_packet(read_data(b'38006F45291200'))
   (1, 6, ((6, 4, 10), (2, 4, 20)))
 
-  >>> decode_packet(make_bitstream(io.BytesIO(b'EE00D40C823060')))
+  >>> decode_packet(read_data(b'EE00D40C823060'))
   (7, 3, ((2, 4, 1), (4, 4, 2), (1, 4, 3)))
   '''
-  bitstream = iter(bitstream)
-
   V = bits_to_uint(islice(bitstream, 3))
   T = bits_to_uint(islice(bitstream, 3))
   if T == 4: # literal value
@@ -104,34 +102,40 @@ def part2(data):
   '''
   Does the thing!
 
-  >>> part2(make_bitstream(io.BytesIO(b'C200B40A82')))
+  >>> part2(read_data(b'C200B40A82'))
   3
 
-  >>> part2(make_bitstream(io.BytesIO(b'04005AC33890')))
+  >>> part2(read_data(b'04005AC33890'))
   54
 
-  >>> part2(make_bitstream(io.BytesIO(b'880086C3E88112')))
+  >>> part2(read_data(b'880086C3E88112'))
   7
 
-  >>> part2(make_bitstream(io.BytesIO(b'CE00C43D881120')))
+  >>> part2(read_data(b'CE00C43D881120'))
   9
 
-  >>> part2(make_bitstream(io.BytesIO(b'D8005AC2A8F0')))
+  >>> part2(read_data(b'D8005AC2A8F0'))
   1
 
-  >>> part2(make_bitstream(io.BytesIO(b'F600BC2D8F')))
+  >>> part2(read_data(b'F600BC2D8F'))
   0
 
-  >>> part2(make_bitstream(io.BytesIO(b'9C005AC2F8F0')))
+  >>> part2(read_data(b'9C005AC2F8F0'))
   0
 
-  >>> part2(make_bitstream(io.BytesIO(b'9C0141080250320F1802104A08')))
+  >>> part2(read_data(b'9C0141080250320F1802104A08'))
   1
   '''
   packet = decode_packet(data)
   return process_packet(packet)
 
-def make_bitstream(buf):
+def read_data(name_or_data):
+  if isinstance(name_or_data, str):
+     buf = open(name_or_data, 'rb')
+  elif isinstance(name_or_data, bytes):
+     buf = io.BytesIO(name_or_data)
+  else:
+     raise ArgumentError
   c = buf.read(1)
   while c not in (b'\n', b''):
     h = int(c, 16)
@@ -140,9 +144,6 @@ def make_bitstream(buf):
     yield (h & 0b0010) >> 1
     yield (h & 0b0001) >> 0
     c = buf.read(1)
-
-def read_data(name):
-  return make_bitstream(open(name, 'rb'))
 
 def main():
    test_data = read_data('16-test.txt')
@@ -159,5 +160,8 @@ import sys
 if len(sys.argv) > 1 and sys.argv[1] == '--test':
     import doctest
     doctest.testmod()
+elif len(sys.argv) > 1 and sys.argv[1] == '-i':
+    from IPython import embed
+    embed()
 else:
     main()
