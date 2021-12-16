@@ -30,6 +30,8 @@ def dijkstra(data, start = None, end = None):
 
   while not visited[rng.stop-1][dom.stop-1]:
     _, cur = candidates.get_nowait()
+    if cur == end:
+       break
     if visited[cur[1]][cur[0]]:
       continue
     visited[cur[1]][cur[0]] = True
