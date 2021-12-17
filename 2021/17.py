@@ -29,7 +29,6 @@ def x_valid_times(data):
   return times, dx0min
 
 def find_y(rng, valid_x_times, dx0min):
-  #print(rng, valid_x_times, dx0min)
   for vy_0 in range(-abs(rng.start), max(abs(rng.start), abs(rng.stop))*2):
     y = 0
     max_y = 0
@@ -38,35 +37,28 @@ def find_y(rng, valid_x_times, dx0min):
       y += vy
       max_y = max(max_y, y)
       vy -= 1
-      #print(f'y:{y} t:{t} max_y:{max_y}')
       if y in rng and (t in valid_x_times or t >= dx0min):
         yield vy_0, y, t, max_y
       elif y < rng.stop:
         break
 
-def part1(data):
-  dom, rng = data
+def get_valid_values(dom, rng):
   valid_x_values = tuple(find_x(dom))
   valid_x_times, dx0min = x_valid_times(valid_x_values)
-
-  #print(valid_x_times, dx0min)
   valid_y_values = tuple(find_y(rng, valid_x_times, dx0min))
-  return max(valid_y_values, key=op.itemgetter(3))[3]
+  return valid_x_values, valid_y_values
+
+def part1(data):
+  valid_x, valid_y = get_valid_values(*data)
+  return max(valid_y, key=op.itemgetter(3))[3]
 
 def part2(data):
-  dom, rng = data
-  valid_x_values = tuple(find_x(dom))
-  valid_x_times, dx0min = x_valid_times(valid_x_values)
-
-  valid_y_values = tuple(find_y(rng, valid_x_times, dx0min))
-  #print(valid_x_values)
-  #print(valid_y_values)
+  valid_x, valid_y = get_valid_values(*data)
 
   valid = set()
-  for valid_x, valid_y in itertools.product(valid_x_values, valid_y_values):
-    if valid_x[2] == valid_y[2] or (valid_y[2] > valid_x[2] and valid_x[3]):
-      #print(f'{valid_x[0]},{valid_y[0]}')
-      valid.add((valid_x[0], valid_y[0]))
+  for x, y in itertools.product(valid_x, valid_y):
+    if x[2] == y[2] or (y[2] > x[2] and x[3]):
+      valid.add((x[0], y[0]))
   return len(valid)
 
 def main():
