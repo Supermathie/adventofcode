@@ -5,27 +5,6 @@ import itertools
 import io
 import re
 
-Step = collections.namedtuple('Step', ['on', 'x', 'y', 'z', 'cube'])
-
-def part1(steps):
-  pixels = set()
-  for step in steps:
-
-    for x, y, z in itertools.product(
-      set(step.x) & set(range(-50,51)),
-      set(step.y) & set(range(-50,51)),
-      set(step.z) & set(range(-50,51)),
-    ):
-      if -50 <= x <= 50 and -50 <= y <= 50 and -50 <= z <= 50:
-        if step.on:
-          pixels.add((x, y, z))
-        else:
-          try:
-            pixels.remove((x, y, z))
-          except KeyError:
-            pass
-  return len(pixels)
-
 class Cube:
   def __init__(self, x1, x2, y1, y2, z1, z2, on=True):
     if x1 > x2:
@@ -55,6 +34,13 @@ class Cube:
       self.z2 == other.z2,
     ))
   
+  def in_bootstrap_region(self):
+    return all ((
+      -50 <= self.x1 <= self.x2 <= 50,
+      -50 <= self.y1 <= self.y2 <= 50,
+      -50 <= self.z1 <= self.z2 <= 50,
+    ))
+
   def volume(self):
     return (self.x2-self.x1+1) * (self.y2-self.y1+1) * (self.z2-self.z1+1) * (1 if self.on else -1)
 
@@ -71,6 +57,9 @@ class Cube:
     True
 
     >>> Cube(0, 0, 0, 0, 0, 0).overlaps(Cube(0, 0, 0, 0, 1, 1))
+    False
+
+    >>> Cube(0, 0, 0, 0, 0, 0).overlaps(Cube(0, 0, -1, -1, -1, 1))
     False
     '''
     return all((
@@ -132,39 +121,36 @@ class Cube:
       on
     )
 
-def part2(steps):
+def run_steps(steps, init=False):
   cubes = []
   for step in steps:
-    new_cubes = []
-    for cube in cubes:
-      if cube.overlaps(step.cube):
-        new_cubes.append(cube.intersect(step.cube, not cube.on))
-    if step.cube.on:
-      new_cubes.append(step.cube)
-    cubes.extend(new_cubes)
+    if init and not step.in_bootstrap_region():
+      continue
+
+    for cube in tuple(cubes):
+      if cube.overlaps(step):
+        cubes.append(cube.intersect(step, not cube.on))
+    if step.on:
+      cubes.append(step)
   
+  return cubes
+
+def part1(steps):
+  cubes = run_steps(steps, init=True)
   return sum(map(Cube.volume, cubes))
 
-def part2_attempt1(steps):
-  cubes = []
-  for step in steps:
-    new_cubes = []
-    for cube in cubes:
-      new_cubes.extend(cube.mask(step.cube))
-    if step.on:
-      new_cubes.append(step.cube)
-    cubes = new_cubes
-  
+def part2(steps):
+  cubes = run_steps(steps)
   return sum(map(Cube.volume, cubes))
 
 def read_data(name_or_data):
   '''Reads the data, as you might expect
 
   >>> read_data(b'on x=10..12,y=10..12,z=10..12')[0]
-  Step(on=True, x=range(10, 13), y=range(10, 13), z=range(10, 13), cube=...)
+  Cube(10, 12, 10, 12, 10, 12)
 
   >>> read_data(b'off x=-12..-10,y=-12..-10,z=-12..-10')[0]
-  Step(on=False, x=range(-12, -9), y=range(-12, -9), z=range(-12, -9), cube=...)
+  Cube(-12, -10, -12, -10, -12, -10, on=False)
 
   '''
   if isinstance(name_or_data, str):
@@ -180,13 +166,7 @@ def read_data(name_or_data):
       print(f'{line.strip()} did not parse')
     g = m.groups()
     x1, x2, y1, y2, z1, z2 = map(int, g[1:])
-    return Step(
-      g[0] == 'on',
-      range(x1, x2 + 1),
-      range(y1, y2 + 1),
-      range(z1, z2 + 1),
-      Cube(x1, x2, y1, y2, z1, z2, on=g[0] == 'on')
-    )
+    return Cube(x1, x2, y1, y2, z1, z2, on=g[0] == 'on')
   return tuple(parse(line) for line in buf)
 
 def main():
