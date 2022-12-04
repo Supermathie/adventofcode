@@ -61,5 +61,5 @@ pub fn solve() -> SolutionPair {
         }
     }
 
-    (Solution::U64(score1.try_into().unwrap()), Solution::U64(score2.try_into().unwrap()))
+    (Solution::from(score1), Solution::from(score2))
 }
