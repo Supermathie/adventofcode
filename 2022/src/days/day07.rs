@@ -59,8 +59,8 @@ pub fn solve() -> SolutionPair {
         }
         if dirsize > 0 && dirsize <= 100_000 {
             sol1 += dirsize;
-        }        
-        if dirsize >= needed_space && dirsize < sol2 as usize {
+        }
+        if dirsize >= needed_space && dirsize < sol2 {
             sol2 = dirsize;
         }        
     }
