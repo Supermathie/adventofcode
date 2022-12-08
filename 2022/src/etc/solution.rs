@@ -8,6 +8,7 @@ pub enum Solution {
     U32(u32),
     U64(u64),
     U128(u128),
+    USize(usize),
     Str(String),
 }
 
@@ -20,6 +21,7 @@ impl Display for Solution {
             U32(x) => x.fmt(f),
             U64(x) => x.fmt(f),
             U128(x) => x.fmt(f),
+            USize(x) => x.fmt(f),
             Str(x) => x.fmt(f),
         }
     }
@@ -58,6 +60,12 @@ impl From<u64> for Solution {
 impl From<u128> for Solution {
     fn from(sol: u128) -> Self {
         Self::U128(sol)
+    }
+}
+
+impl From<usize> for Solution {
+    fn from(sol: usize) -> Self {
+        Self::USize(sol)
     }
 }
 
