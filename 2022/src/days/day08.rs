@@ -14,11 +14,16 @@ fn print_forest(forest: &Vec<Vec<u8>>, visible_trees: &Vec<Vec<bool>>) {
     for y in 0..y_max {
         for x in 0..x_max {
             let tree = forest[y][x];
-            let tree = format!("{}", tree);
+            let good = format!("{}", tree).green();
+            let bad = format!("{}", tree);
+
+            // let tree = "🌲";
+            // let good = format!("{}", tree).green();
+            // let bad = format!("{}", "  ").black();
             if visible_trees[y][x] {
-                print!("{}", tree.green());
+                print!("{}", good);
             } else {
-                print!("{}", tree);
+                print!("{}", bad);
             }
         }
         print!("\n");
