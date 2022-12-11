@@ -9,15 +9,15 @@ fn get_px(reg_x: i64, cycle: i64) -> &'static str {
     let col = (cycle - 1) % 40;
     if (reg_x - col).abs() < 2 {
         if cycle % 40 == 0 {
-            "#\n"
+            "🌲\n"
         } else {
-            "#"
+            "🌲"
         }
     } else {
         if cycle % 40 == 0 {
-            " \n"
+            "  \n"
         } else {
-            " "
+            "  "
         }
     }
 }
