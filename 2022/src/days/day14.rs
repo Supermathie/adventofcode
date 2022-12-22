@@ -1,5 +1,4 @@
 use std::collections::HashSet;
-use std::collections::HashMap;
 use std::fmt;
 use std::io::BufRead;
 
@@ -28,34 +27,7 @@ impl Point {
     }
 }
 
-fn fall_from1(map: &HashSet<Point>, start: &Point, y_max: &CoordSize) -> Option<Point> {
-    let mut coord = start.clone();
-    loop {
-        if coord.y > *y_max {
-            return None
-        }
-        if map.contains(&Point { y: coord.y + 1, ..coord }) {
-            // blocked from falling down
-            if map.contains(&Point { x: coord.x - 1, y: coord.y + 1 }) {
-                // blocked from falling left
-                if map.contains(&Point { x: coord.x + 1, y: coord.y + 1 }) {
-                    // blocked from falling right
-                    return Some(coord)
-                } else {
-                    coord.x += 1;
-                    coord.y += 1;
-                }
-            } else {
-                coord.x -= 1;
-                coord.y += 1;
-            }
-        } else {
-            coord.y += 1;
-        }
-    }
-}
-
-fn fall_from2(map: &HashSet<Point>, start: &Point, y_max: &CoordSize) -> Point {
+fn fall_from(map: &HashSet<Point>, start: &Point, y_max: &CoordSize) -> Point {
     let mut coord = start.clone();
     loop {
         if coord.y == *y_max + 1 {
@@ -87,7 +59,11 @@ fn solve_for1(input: &HashSet<Point>) -> usize {
     let y_max = map.iter().map(|p| p.y).reduce(|a, b| a.max(b)).unwrap();
     let start = Point { x: 500, y: 0 };
 
-    while let Some(new_grain) = fall_from1(&map, &start, &y_max) {
+    loop {
+        let new_grain = fall_from(&map, &start, &y_max);
+        if new_grain.y > y_max {
+            break;
+        }
         map.insert(new_grain);
     }
 
@@ -100,7 +76,7 @@ fn solve_for2(input: &HashSet<Point>) -> usize {
     let start = Point { x: 500, y: 0 };
 
     loop {
-        let new_grain = fall_from2(&map, &start, &y_max);
+        let new_grain = fall_from(&map, &start, &y_max);
         if new_grain == start {
             break;
         }
@@ -132,7 +108,7 @@ fn get_input(filename: &str) -> HashSet<Point> {
 
 
 pub fn solve() -> SolutionPair {
-    let mut input = get_input("input/14.txt");
+    let input = get_input("input/14.txt");
 
     let sol1 = solve_for1(&input);
     let sol2 = solve_for2(&input);

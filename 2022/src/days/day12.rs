@@ -72,37 +72,15 @@ fn solve_for(heightmap: &Vec<Vec<u8>>, start_pos: Point, end_condition: impl Fn(
             break pos;
         }
 
-        let new = Point { x: pos.x, y: pos.y - 1 }; // up
-        if let Some(new_height) = heightmap.get(new.y as usize).and_then(|row| row.get(new.x as usize)) {
-            // ok it's on the map
-            if can_traverse(&pos_height, new_height) && cost[new.y as usize][new.x as usize] == None {
-                cost[new.y as usize][new.x as usize] = Some(pos_cost + 1);
-                queue.push_front(new);
-            }
-        }
-        let new = Point { x: pos.x, y: pos.y + 1 }; // down
-        if let Some(new_height) = heightmap.get(new.y as usize).and_then(|row| row.get(new.x as usize)) {
-            // ok it's on the map
-            if can_traverse(&pos_height, new_height) && cost[new.y as usize][new.x as usize] == None {
-                cost[new.y as usize][new.x as usize] = Some(pos_cost + 1);
-                queue.push_front(new);
-            }
-        }
-        let new = Point { x: pos.x - 1, y: pos.y }; // left
-        if let Some(new_height) = heightmap.get(new.y as usize).and_then(|row| row.get(new.x as usize)) {
-            // ok it's on the map
-            if can_traverse(&pos_height, new_height) && cost[new.y as usize][new.x as usize] == None {
-                cost[new.y as usize][new.x as usize] = Some(pos_cost + 1);
-                queue.push_front(new);
-            }
-        }
-        let new = Point { x: pos.x + 1, y: pos.y }; // right
-        if let Some(new_height) = heightmap.get(new.y as usize).and_then(|row| row.get(new.x as usize)) {
-            // ok it's on the map
-            if can_traverse(&pos_height, new_height) && cost[new.y as usize][new.x as usize] == None {
-                cost[new.y as usize][new.x as usize] = Some(pos_cost + 1);
-                queue.push_front(new);
-            }
+        for (dx, dy) in [(0, -1), (0, 1), (-1, 0), (1, 0)] {
+            let new = Point { x: pos.x + dx, y: pos.y + dy };
+            if let Some(new_height) = heightmap.get(new.y as usize).and_then(|row| row.get(new.x as usize)) {
+                // ok it's on the map
+                if can_traverse(&pos_height, new_height) && cost[new.y as usize][new.x as usize] == None {
+                    cost[new.y as usize][new.x as usize] = Some(pos_cost + 1);
+                    queue.push_front(new);
+                }
+            }    
         }
     };
     cost[end_pos.y as usize][end_pos.x as usize].unwrap()

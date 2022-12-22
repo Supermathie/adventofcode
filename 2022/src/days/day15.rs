@@ -1,6 +1,5 @@
 use sscanf;
 use std::collections::HashSet;
-use std::collections::HashMap;
 use std::io::BufRead;
 use std::fmt;
 
@@ -35,12 +34,6 @@ struct Sensor {
     loc: Point,
     beacon: Point,
     empty_dist: u64,
-}
-
-impl Sensor {
-    fn empty_dist(&self) -> u64 {
-        self.loc.manhattan(&self.beacon)
-    }
 }
 
 fn get_input(filename: &str) -> Vec<Sensor> {
@@ -84,10 +77,10 @@ fn solve_for1(input: &Vec<Sensor>, y: i64) -> u64 {
     sol1
 }
 
-fn solve_for2(input: &Vec<Sensor>, x_min: i64, x_max: i64, y_min: i64, y_max: i64) -> i64 {
+fn solve_for2(input: &Vec<Sensor>, _x_min: i64, x_max: i64, _y_min: i64, y_max: i64) -> i64 {
     let mut x = 0;
     let mut y = 0;
-    'y_loop: while y <= y_max {
+    while y <= y_max {
         'x_loop: while x <= x_max {
             let trial_point = Point { x, y };
             // println!("testing: {}", trial_point);
