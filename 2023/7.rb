@@ -12,9 +12,12 @@ class Hand < Object
   attr_reader :cards
   attr_reader :bid
 
-  @@rankmap = '23456789ABCDE'
+  def rankmap
+    '23456789ABCDE'
+  end
+
   def card_ranks
-    @card_ranks ||= @cards.map { |c| c.tr('23456789TJQKA', @@rankmap) }
+    @card_ranks ||= @cards.map { |c| c.tr('23456789TJQKA', rankmap) }
   end
 
   def type
@@ -50,7 +53,9 @@ class Hand < Object
 end
 
 class JokerHand < Hand
-  @@rankmap = '23456789A0CDE'
+  def rankmap
+    '23456789A0CDE'
+  end
 
   def type
     card_groups = @cards.each_with_object(Hash.new(0)) { |e, h| h[e] += 1 }
